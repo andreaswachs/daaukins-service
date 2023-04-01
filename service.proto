@@ -104,6 +104,7 @@ message Frontend {
 
 message GetFrontendsRequest {
     string server_id = 1;
+    string lab_id = 2;
 }
 
 message GetFrontendsResponse {
