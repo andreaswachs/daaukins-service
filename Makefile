@@ -13,3 +13,16 @@ build:
 .PHONY: debug
 debug:
 	evans --path . --proto service.proto --host ${DKN_ADDR} --port ${DKN_PORT}
+
+.PHONY: bump-version-patch
+bump-version-patch:
+	@printf "%s.%s" \
+		$(shell git tag --sort=committerdate | grep -E '^v[0-9]' | tail -1 | cut -d "." -f 1-2) \
+		$(shell git tag --sort=committerdate | grep -E '^v[0-9]' | tail -1 | cut -d "." -f 3 | xargs expr 1 +) \
+		> .new_version
+
+	git tag $(shell cat .new_version)
+	git push origin $(shell cat .new_version)
+	rm .new_version
+
+	
