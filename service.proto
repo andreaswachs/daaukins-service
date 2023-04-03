@@ -12,6 +12,7 @@ service service {
     rpc GetLab(GetLabRequest) returns (GetLabResponse) {}
     rpc GetLabs(GetLabsRequest) returns (GetLabsResponse) {}
     rpc RemoveLab(RemoveLabRequest) returns (RemoveLabResponse) {}
+    rpc RemoveLabs(RemoveLabsRequest) returns (RemoveLabsResponse) {}
     rpc GetServerMode(GetServerModeRequest) returns (GetServerModeResponse) {}
     rpc GetFrontends(GetFrontendsRequest) returns (GetFrontendsResponse) {}
     rpc GetServers(google.protobuf.Empty) returns (GetServersResponse) {}
@@ -80,10 +81,17 @@ message GetLabsResponse {
 
 message RemoveLabRequest {
     string id = 1;
-    string server_id = 2;
 }
 
 message RemoveLabResponse {
+    bool ok = 1;
+}
+
+message RemoveLabsRequest {
+    string server_id = 1;
+}
+
+message RemoveLabsResponse {
     bool ok = 1;
 }
 
@@ -122,3 +130,4 @@ message Server {
 message GetServersResponse {
     repeated Server servers = 1;
 }
+
