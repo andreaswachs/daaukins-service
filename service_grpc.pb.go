@@ -28,6 +28,7 @@ type ServiceClient interface {
 	GetLab(ctx context.Context, in *GetLabRequest, opts ...grpc.CallOption) (*GetLabResponse, error)
 	GetLabs(ctx context.Context, in *GetLabsRequest, opts ...grpc.CallOption) (*GetLabsResponse, error)
 	RemoveLab(ctx context.Context, in *RemoveLabRequest, opts ...grpc.CallOption) (*RemoveLabResponse, error)
+	RemoveLabs(ctx context.Context, in *RemoveLabsRequest, opts ...grpc.CallOption) (*RemoveLabsResponse, error)
 	GetServerMode(ctx context.Context, in *GetServerModeRequest, opts ...grpc.CallOption) (*GetServerModeResponse, error)
 	GetFrontends(ctx context.Context, in *GetFrontendsRequest, opts ...grpc.CallOption) (*GetFrontendsResponse, error)
 	GetServers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetServersResponse, error)
@@ -86,6 +87,15 @@ func (c *serviceClient) RemoveLab(ctx context.Context, in *RemoveLabRequest, opt
 	return out, nil
 }
 
+func (c *serviceClient) RemoveLabs(ctx context.Context, in *RemoveLabsRequest, opts ...grpc.CallOption) (*RemoveLabsResponse, error) {
+	out := new(RemoveLabsResponse)
+	err := c.cc.Invoke(ctx, "/service.service/RemoveLabs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *serviceClient) GetServerMode(ctx context.Context, in *GetServerModeRequest, opts ...grpc.CallOption) (*GetServerModeResponse, error) {
 	out := new(GetServerModeResponse)
 	err := c.cc.Invoke(ctx, "/service.service/GetServerMode", in, out, opts...)
@@ -122,6 +132,7 @@ type ServiceServer interface {
 	GetLab(context.Context, *GetLabRequest) (*GetLabResponse, error)
 	GetLabs(context.Context, *GetLabsRequest) (*GetLabsResponse, error)
 	RemoveLab(context.Context, *RemoveLabRequest) (*RemoveLabResponse, error)
+	RemoveLabs(context.Context, *RemoveLabsRequest) (*RemoveLabsResponse, error)
 	GetServerMode(context.Context, *GetServerModeRequest) (*GetServerModeResponse, error)
 	GetFrontends(context.Context, *GetFrontendsRequest) (*GetFrontendsResponse, error)
 	GetServers(context.Context, *emptypb.Empty) (*GetServersResponse, error)
@@ -146,6 +157,9 @@ func (UnimplementedServiceServer) GetLabs(context.Context, *GetLabsRequest) (*Ge
 }
 func (UnimplementedServiceServer) RemoveLab(context.Context, *RemoveLabRequest) (*RemoveLabResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveLab not implemented")
+}
+func (UnimplementedServiceServer) RemoveLabs(context.Context, *RemoveLabsRequest) (*RemoveLabsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveLabs not implemented")
 }
 func (UnimplementedServiceServer) GetServerMode(context.Context, *GetServerModeRequest) (*GetServerModeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerMode not implemented")
@@ -259,6 +273,24 @@ func _Service_RemoveLab_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Service_RemoveLabs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveLabsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).RemoveLabs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.service/RemoveLabs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).RemoveLabs(ctx, req.(*RemoveLabsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Service_GetServerMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetServerModeRequest)
 	if err := dec(in); err != nil {
@@ -339,6 +371,10 @@ var Service_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveLab",
 			Handler:    _Service_RemoveLab_Handler,
+		},
+		{
+			MethodName: "RemoveLabs",
+			Handler:    _Service_RemoveLabs_Handler,
 		},
 		{
 			MethodName: "GetServerMode",
