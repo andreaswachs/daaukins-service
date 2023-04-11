@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServiceClient interface {
+	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	HaveCapacity(ctx context.Context, in *HaveCapacityRequest, opts ...grpc.CallOption) (*HaveCapacityResponse, error)
 	ScheduleLab(ctx context.Context, in *ScheduleLabRequest, opts ...grpc.CallOption) (*ScheduleLabResponse, error)
 	GetLab(ctx context.Context, in *GetLabRequest, opts ...grpc.CallOption) (*GetLabResponse, error)
@@ -40,6 +41,15 @@ type serviceClient struct {
 
 func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
 	return &serviceClient{cc}
+}
+
+func (c *serviceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/service.service/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *serviceClient) HaveCapacity(ctx context.Context, in *HaveCapacityRequest, opts ...grpc.CallOption) (*HaveCapacityResponse, error) {
@@ -127,6 +137,7 @@ func (c *serviceClient) GetServers(ctx context.Context, in *emptypb.Empty, opts 
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
 type ServiceServer interface {
+	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	HaveCapacity(context.Context, *HaveCapacityRequest) (*HaveCapacityResponse, error)
 	ScheduleLab(context.Context, *ScheduleLabRequest) (*ScheduleLabResponse, error)
 	GetLab(context.Context, *GetLabRequest) (*GetLabResponse, error)
@@ -143,6 +154,9 @@ type ServiceServer interface {
 type UnimplementedServiceServer struct {
 }
 
+func (UnimplementedServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
 func (UnimplementedServiceServer) HaveCapacity(context.Context, *HaveCapacityRequest) (*HaveCapacityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HaveCapacity not implemented")
 }
@@ -181,6 +195,24 @@ type UnsafeServiceServer interface {
 
 func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
 	s.RegisterService(&Service_ServiceDesc, srv)
+}
+
+func _Service_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.service/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).Ping(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Service_HaveCapacity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -352,6 +384,10 @@ var Service_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "service.service",
 	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _Service_Ping_Handler,
+		},
 		{
 			MethodName: "HaveCapacity",
 			Handler:    _Service_HaveCapacity_Handler,
