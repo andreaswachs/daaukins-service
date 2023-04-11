@@ -40,6 +40,7 @@ message HaveCapacityResponse {
 // and schedule the lab.
 message ScheduleLabRequest {
     string lab = 1;
+    string server_id = 2;
 }
 
 // ScheduleLabResponse
