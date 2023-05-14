@@ -9,7 +9,7 @@ package service;
 service service {
     rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty) {}
     rpc HaveCapacity(HaveCapacityRequest) returns (HaveCapacityResponse) {}
-    rpc ScheduleLab(ScheduleLabRequest) returns (ScheduleLabResponse) {}
+    rpc CreateLab(CreateLabRequest) returns (CreateLabResponse) {}
     rpc GetLab(GetLabRequest) returns (GetLabResponse) {}
     rpc GetLabs(GetLabsRequest) returns (GetLabsResponse) {}
     rpc RemoveLab(RemoveLabRequest) returns (RemoveLabResponse) {}
@@ -35,18 +35,18 @@ message HaveCapacityResponse {
     int32 capacity = 2;
 }
 
-// ScheduleLabRequest contains the string lab
+// CreateLabRequest contains the string lab
 // which is YAML configuration for a lab.
 // It is the server's responsibility to parse the YAML
-// and schedule the lab.
-message ScheduleLabRequest {
+// and create the lab.
+message CreateLabRequest {
     string lab = 1;
     string server_id = 2;
 }
 
-// ScheduleLabResponse
-message ScheduleLabResponse {
-    bool scheduled = 1;
+// CreateLabResponse
+message CreateLabResponse {
+    bool created = 1;
     string id = 2;
     Frontend frontend = 3;
 }
