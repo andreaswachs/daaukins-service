@@ -25,7 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ServiceClient interface {
 	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	HaveCapacity(ctx context.Context, in *HaveCapacityRequest, opts ...grpc.CallOption) (*HaveCapacityResponse, error)
-	ScheduleLab(ctx context.Context, in *ScheduleLabRequest, opts ...grpc.CallOption) (*ScheduleLabResponse, error)
+	CreateLab(ctx context.Context, in *CreateLabRequest, opts ...grpc.CallOption) (*CreateLabResponse, error)
 	GetLab(ctx context.Context, in *GetLabRequest, opts ...grpc.CallOption) (*GetLabResponse, error)
 	GetLabs(ctx context.Context, in *GetLabsRequest, opts ...grpc.CallOption) (*GetLabsResponse, error)
 	RemoveLab(ctx context.Context, in *RemoveLabRequest, opts ...grpc.CallOption) (*RemoveLabResponse, error)
@@ -61,9 +61,9 @@ func (c *serviceClient) HaveCapacity(ctx context.Context, in *HaveCapacityReques
 	return out, nil
 }
 
-func (c *serviceClient) ScheduleLab(ctx context.Context, in *ScheduleLabRequest, opts ...grpc.CallOption) (*ScheduleLabResponse, error) {
-	out := new(ScheduleLabResponse)
-	err := c.cc.Invoke(ctx, "/service.service/ScheduleLab", in, out, opts...)
+func (c *serviceClient) CreateLab(ctx context.Context, in *CreateLabRequest, opts ...grpc.CallOption) (*CreateLabResponse, error) {
+	out := new(CreateLabResponse)
+	err := c.cc.Invoke(ctx, "/service.service/CreateLab", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (c *serviceClient) GetServers(ctx context.Context, in *emptypb.Empty, opts 
 type ServiceServer interface {
 	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	HaveCapacity(context.Context, *HaveCapacityRequest) (*HaveCapacityResponse, error)
-	ScheduleLab(context.Context, *ScheduleLabRequest) (*ScheduleLabResponse, error)
+	CreateLab(context.Context, *CreateLabRequest) (*CreateLabResponse, error)
 	GetLab(context.Context, *GetLabRequest) (*GetLabResponse, error)
 	GetLabs(context.Context, *GetLabsRequest) (*GetLabsResponse, error)
 	RemoveLab(context.Context, *RemoveLabRequest) (*RemoveLabResponse, error)
@@ -160,8 +160,8 @@ func (UnimplementedServiceServer) Ping(context.Context, *emptypb.Empty) (*emptyp
 func (UnimplementedServiceServer) HaveCapacity(context.Context, *HaveCapacityRequest) (*HaveCapacityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HaveCapacity not implemented")
 }
-func (UnimplementedServiceServer) ScheduleLab(context.Context, *ScheduleLabRequest) (*ScheduleLabResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ScheduleLab not implemented")
+func (UnimplementedServiceServer) CreateLab(context.Context, *CreateLabRequest) (*CreateLabResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateLab not implemented")
 }
 func (UnimplementedServiceServer) GetLab(context.Context, *GetLabRequest) (*GetLabResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLab not implemented")
@@ -233,20 +233,20 @@ func _Service_HaveCapacity_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Service_ScheduleLab_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ScheduleLabRequest)
+func _Service_CreateLab_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateLabRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).ScheduleLab(ctx, in)
+		return srv.(ServiceServer).CreateLab(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/service.service/ScheduleLab",
+		FullMethod: "/service.service/CreateLab",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).ScheduleLab(ctx, req.(*ScheduleLabRequest))
+		return srv.(ServiceServer).CreateLab(ctx, req.(*CreateLabRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -393,8 +393,8 @@ var Service_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Service_HaveCapacity_Handler,
 		},
 		{
-			MethodName: "ScheduleLab",
-			Handler:    _Service_ScheduleLab_Handler,
+			MethodName: "CreateLab",
+			Handler:    _Service_CreateLab_Handler,
 		},
 		{
 			MethodName: "GetLab",
